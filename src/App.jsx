@@ -95,6 +95,7 @@ export default function App() {
                   type="number"
                   value={joursBDR}
                   onChange={(e) => setJoursBDR(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg font-medium"
                   min="0"
                   step="0.5"
@@ -110,6 +111,7 @@ export default function App() {
                   type="number"
                   value={joursTech}
                   onChange={(e) => setJoursTech(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg font-medium"
                   min="0"
                   step="0.5"
@@ -125,6 +127,7 @@ export default function App() {
                   type="number"
                   value={joursGrowth}
                   onChange={(e) => setJoursGrowth(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg font-medium"
                   min="0"
                   step="0.5"
@@ -156,6 +159,7 @@ export default function App() {
                   type="number"
                   value={forfaitMensuel}
                   onChange={(e) => setForfaitMensuel(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                   min="0"
                   step="100"
@@ -172,6 +176,7 @@ export default function App() {
                       type="number"
                       value={caGenere}
                       onChange={(e) => setCaGenere(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                       min="0"
                       step="1000"
@@ -186,6 +191,7 @@ export default function App() {
                       type="number"
                       value={pourcentageVariable}
                       onChange={(e) => setPourcentageVariable(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                       min="0"
                       max="100"
@@ -201,6 +207,7 @@ export default function App() {
                       type="number"
                       value={coefficient}
                       onChange={(e) => setCoefficient(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                       min="0"
                       step="0.1"
@@ -218,6 +225,7 @@ export default function App() {
                       type="number"
                       value={cpl}
                       onChange={(e) => setCpl(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                       min="0"
                       step="1"
@@ -233,6 +241,7 @@ export default function App() {
                       type="number"
                       value={nbRdv}
                       onChange={(e) => setNbRdv(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
                       min="0"
                       step="1"
