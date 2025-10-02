@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Calculator, TrendingUp, DollarSign, Info } from 'lucide-react';
 
-export default function CalculatriceRentabilite() {
+export default function App() {
   const [joursBDR, setJoursBDR] = useState(2);
   const [joursTech, setJoursTech] = useState(3);
   const [joursGrowth, setJoursGrowth] = useState(1);
@@ -10,11 +9,13 @@ export default function CalculatriceRentabilite() {
   const [pourcentageVariable, setPourcentageVariable] = useState(10);
   const [coefficient, setCoefficient] = useState(1.0);
 
-  const COUT_JOUR = 150;
+  // COÛTS MODIFIABLES ICI (non visibles par l'utilisateur)
+  const COUT_BDR = 150;
+  const COUT_TECH = 150;
+  const COUT_GROWTH = 150;
   const FRAIS_FIXES_PAR_CLIENT = 600;
 
-  // Calculs
-  const coutsProduction = (joursBDR + joursTech + joursGrowth) * COUT_JOUR;
+  const coutsProduction = (joursBDR * COUT_BDR) + (joursTech * COUT_TECH) + (joursGrowth * COUT_GROWTH);
   const coutsTotal = coutsProduction + FRAIS_FIXES_PAR_CLIENT;
   
   const variable = (caGenere * pourcentageVariable / 100) * coefficient;
@@ -23,24 +24,29 @@ export default function CalculatriceRentabilite() {
   const margeBrute = revenusTotal - coutsTotal;
   const tauxMarge = revenusTotal > 0 ? (margeBrute / revenusTotal) * 100 : 0;
 
+  // Couleur de la marge selon le taux
+  const getMargeColor = () => {
+    if (margeBrute < 0) return 'bg-red-500';
+    if (tauxMarge < 20) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
-            <Calculator className="w-8 h-8 text-white" />
+            <span className="text-3xl">🧮</span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Calculatrice de Rentabilité</h1>
           <p className="text-gray-600">Analysez la rentabilité de vos projets en temps réel</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Colonne 1: Production */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <span className="text-xl">📊</span>
               </div>
               <h2 className="text-xl font-bold text-gray-900">Production</h2>
             </div>
@@ -58,7 +64,7 @@ export default function CalculatriceRentabilite() {
                   min="0"
                   step="0.5"
                 />
-                <p className="text-xs text-gray-500 mt-1">150€/jour</p>
+                <p className="text-xs text-gray-500 mt-1">{COUT_BDR}€/jour</p>
               </div>
 
               <div>
@@ -73,7 +79,7 @@ export default function CalculatriceRentabilite() {
                   min="0"
                   step="0.5"
                 />
-                <p className="text-xs text-gray-500 mt-1">150€/jour</p>
+                <p className="text-xs text-gray-500 mt-1">{COUT_TECH}€/jour</p>
               </div>
 
               <div>
@@ -88,7 +94,7 @@ export default function CalculatriceRentabilite() {
                   min="0"
                   step="0.5"
                 />
-                <p className="text-xs text-gray-500 mt-1">150€/jour</p>
+                <p className="text-xs text-gray-500 mt-1">{COUT_GROWTH}€/jour</p>
               </div>
 
               <div className="bg-blue-50 rounded-xl p-4 mt-4">
@@ -98,11 +104,10 @@ export default function CalculatriceRentabilite() {
             </div>
           </div>
 
-          {/* Colonne 2: Revenus */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-green-600" />
+                <span className="text-xl">💰</span>
               </div>
               <h2 className="text-xl font-bold text-gray-900">Revenus</h2>
             </div>
@@ -153,7 +158,7 @@ export default function CalculatriceRentabilite() {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Coefficient
+                  Coefficient de complexité
                 </label>
                 <input
                   type="number"
@@ -163,19 +168,17 @@ export default function CalculatriceRentabilite() {
                   min="0"
                   step="0.1"
                 />
-                <p className="text-xs text-gray-500 mt-1">Malus &lt;1 | Neutre =1 | Bonus &gt;1</p>
+                <p className="text-xs text-gray-500 mt-1">Projet facile &lt;1 | Standard =1 | Complexe &gt;1</p>
               </div>
             </div>
           </div>
 
-          {/* Colonne 3: Résultats */}
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-xl p-6 text-white">
             <div className="mb-6 pb-4 border-b border-gray-700">
-              <h2 className="text-xl font-bold">Résultats</h2>
+              <h2 className="text-xl font-bold">📈 Résultats</h2>
             </div>
             
             <div className="space-y-4">
-              {/* Revenus */}
               <div className="bg-white/10 backdrop-blur rounded-xl p-4">
                 <div className="text-sm text-gray-300 mb-1">Revenus totaux</div>
                 <div className="text-3xl font-bold mb-2">{revenusTotal.toLocaleString('fr-FR')} €</div>
@@ -185,7 +188,6 @@ export default function CalculatriceRentabilite() {
                 </div>
               </div>
 
-              {/* Coûts */}
               <div className="bg-white/10 backdrop-blur rounded-xl p-4">
                 <div className="text-sm text-gray-300 mb-1">Coûts totaux</div>
                 <div className="text-3xl font-bold mb-2">{coutsTotal.toLocaleString('fr-FR')} €</div>
@@ -195,14 +197,15 @@ export default function CalculatriceRentabilite() {
                 </div>
               </div>
 
-              {/* Marge */}
-              <div className={`${margeBrute >= 0 ? 'bg-green-500' : 'bg-red-500'} rounded-xl p-5 shadow-lg`}>
+              <div className={`${getMargeColor()} rounded-xl p-5 shadow-lg`}>
                 <div className="text-sm text-white/90 mb-2">Marge brute</div>
                 <div className="text-4xl font-bold mb-2">{margeBrute.toLocaleString('fr-FR')} €</div>
                 <div className="text-lg font-semibold">Taux: {tauxMarge.toFixed(1)}%</div>
+                {tauxMarge < 20 && tauxMarge >= 0 && (
+                  <div className="text-sm mt-2 text-white/80">⚠️ Marge faible</div>
+                )}
               </div>
 
-              {/* Projection annuelle */}
               <div className="bg-white/5 border-2 border-white/20 rounded-xl p-4">
                 <div className="text-sm text-gray-300 mb-1">Projection annuelle</div>
                 <div className="text-2xl font-bold text-green-400">{(margeBrute * 12).toLocaleString('fr-FR')} €</div>
@@ -211,15 +214,15 @@ export default function CalculatriceRentabilite() {
           </div>
         </div>
 
-        {/* Info box */}
         <div className="mt-6 bg-amber-50 border-2 border-amber-200 rounded-2xl p-6">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <span className="text-xl">💡</span>
             <div>
               <h3 className="font-semibold text-amber-900 mb-2">Paramètres de base</h3>
               <div className="text-sm text-amber-800 space-y-1">
-                <div>• Coût journalier: 150€ pour tous les métiers</div>
+                <div>• Coût journalier BDR: {COUT_BDR}€ | Tech: {COUT_TECH}€ | Growth: {COUT_GROWTH}€</div>
                 <div>• Frais fixes mensuels: 6000€ répartis sur 10 clients = 600€/client</div>
+                <div>• Seuil d'alerte: marge &lt; 20%</div>
               </div>
             </div>
           </div>
