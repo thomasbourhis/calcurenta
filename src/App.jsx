@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 
 export default function App() {
+  const [mode, setMode] = useState('CA'); // 'CA' ou 'RDV'
   const [joursBDR, setJoursBDR] = useState(2);
   const [joursTech, setJoursTech] = useState(3);
   const [joursGrowth, setJoursGrowth] = useState(1);
   const [forfaitMensuel, setForfaitMensuel] = useState(10000);
+  
+  // Mode CA
   const [caGenere, setCaGenere] = useState(50000);
   const [pourcentageVariable, setPourcentageVariable] = useState(10);
   const [coefficient, setCoefficient] = useState(1.0);
+  
+  // Mode RDV
+  const [cpl, setCpl] = useState(50);
+  const [nbRdv, setNbRdv] = useState(100);
 
   // COÛTS MODIFIABLES ICI (non visibles par l'utilisateur)
   const COUT_BDR = 150;
@@ -18,7 +25,11 @@ export default function App() {
   const coutsProduction = (joursBDR * COUT_BDR) + (joursTech * COUT_TECH) + (joursGrowth * COUT_GROWTH);
   const coutsTotal = coutsProduction + FRAIS_FIXES_PAR_CLIENT;
   
-  const variable = (caGenere * pourcentageVariable / 100) * coefficient;
+  // Calcul du variable selon le mode
+  const variable = mode === 'CA' 
+    ? (caGenere * pourcentageVariable / 100) * coefficient
+    : cpl * nbRdv;
+    
   const revenusTotal = forfaitMensuel + variable;
   
   const margeBrute = revenusTotal - coutsTotal;
@@ -40,6 +51,30 @@ export default function App() {
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Calculatrice de Rentabilité</h1>
           <p className="text-gray-600">Analysez la rentabilité de vos projets en temps réel</p>
+          
+          {/* Toggle Switch */}
+          <div className="mt-6 inline-flex items-center bg-white rounded-full p-1 shadow-lg border-2 border-gray-200">
+            <button
+              onClick={() => setMode('CA')}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                mode === 'CA' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Mode CA
+            </button>
+            <button
+              onClick={() => setMode('RDV')}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                mode === 'RDV' 
+                  ? 'bg-blue-600 text-white shadow-md' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Mode RDV
+            </button>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -127,49 +162,90 @@ export default function App() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  CA généré (€)
-                </label>
-                <input
-                  type="number"
-                  value={caGenere}
-                  onChange={(e) => setCaGenere(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
-                  min="0"
-                  step="1000"
-                />
-              </div>
+              {mode === 'CA' ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      CA généré (€)
+                    </label>
+                    <input
+                      type="number"
+                      value={caGenere}
+                      onChange={(e) => setCaGenere(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  % Variable
-                </label>
-                <input
-                  type="number"
-                  value={pourcentageVariable}
-                  onChange={(e) => setPourcentageVariable(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
-                  min="0"
-                  max="100"
-                  step="0.5"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      % Variable
+                    </label>
+                    <input
+                      type="number"
+                      value={pourcentageVariable}
+                      onChange={(e) => setPourcentageVariable(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      max="100"
+                      step="0.5"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Coefficient de complexité
-                </label>
-                <input
-                  type="number"
-                  value={coefficient}
-                  onChange={(e) => setCoefficient(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
-                  min="0"
-                  step="0.1"
-                />
-                <p className="text-xs text-gray-500 mt-1">Projet facile &lt;1 | Standard =1 | Complexe &gt;1</p>
-              </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Coefficient de complexité
+                    </label>
+                    <input
+                      type="number"
+                      value={coefficient}
+                      onChange={(e) => setCoefficient(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      step="0.1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Projet facile &lt;1 | Standard =1 | Complexe &gt;1</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      CPL - Coût par lead (€)
+                    </label>
+                    <input
+                      type="number"
+                      value={cpl}
+                      onChange={(e) => setCpl(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      step="1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Prix payé par RDV généré</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Nombre de RDV par mois
+                    </label>
+                    <input
+                      type="number"
+                      value={nbRdv}
+                      onChange={(e) => setNbRdv(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      step="1"
+                    />
+                  </div>
+
+                  <div className="bg-green-50 rounded-xl p-4 mt-4">
+                    <div className="text-sm text-green-700 font-medium">Variable total</div>
+                    <div className="text-2xl font-bold text-green-900">{variable.toLocaleString('fr-FR')} €</div>
+                    <p className="text-xs text-green-600 mt-1">{nbRdv} RDV × {cpl}€</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -223,6 +299,7 @@ export default function App() {
                 <div>• Coût journalier BDR: {COUT_BDR}€ | Tech: {COUT_TECH}€ | Growth: {COUT_GROWTH}€</div>
                 <div>• Frais fixes mensuels: 6000€ répartis sur 10 clients = 600€/client</div>
                 <div>• Seuil d'alerte: marge &lt; 20%</div>
+                <div>• Mode actif: <strong>{mode === 'CA' ? 'Chiffre d\'affaires' : 'Rendez-vous (CPL)'}</strong></div>
               </div>
             </div>
           </div>
