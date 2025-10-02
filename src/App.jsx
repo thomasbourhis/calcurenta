@@ -5,6 +5,7 @@ export default function App() {
   const [joursBDR, setJoursBDR] = useState(2);
   const [joursTech, setJoursTech] = useState(3);
   const [joursGrowth, setJoursGrowth] = useState(1);
+  const [remunerationFounders, setRemunerationFounders] = useState(false);
   const [forfaitMensuel, setForfaitMensuel] = useState(10000);
   
   // Mode CA
@@ -21,9 +22,12 @@ export default function App() {
   const COUT_TECH = 150;
   const COUT_GROWTH = 150;
   const FRAIS_FIXES_PAR_CLIENT = 600;
+  const REMUNERATION_FOUNDERS_TOTAL = 8500;
+  const REMUNERATION_FOUNDERS_PAR_CLIENT = REMUNERATION_FOUNDERS_TOTAL / 15;
 
   const coutsProduction = (joursBDR * COUT_BDR) + (joursTech * COUT_TECH) + (joursGrowth * COUT_GROWTH);
-  const coutsTotal = coutsProduction + FRAIS_FIXES_PAR_CLIENT;
+  const fraisFixesClient = FRAIS_FIXES_PAR_CLIENT + (remunerationFounders ? REMUNERATION_FOUNDERS_PAR_CLIENT : 0);
+  const coutsTotal = coutsProduction + fraisFixesClient;
   
   // Calcul du variable selon le mode
   const variable = mode === 'CA' 
@@ -138,6 +142,32 @@ export default function App() {
               <div className="bg-blue-50 rounded-xl p-4 mt-4">
                 <div className="text-sm text-blue-700 font-medium">Total jours</div>
                 <div className="text-2xl font-bold text-blue-900">{joursBDR + joursTech + joursGrowth} jours</div>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-700">Rémunération founders</div>
+                    <div className="text-xs text-gray-500 mt-1">+{REMUNERATION_FOUNDERS_PAR_CLIENT.toFixed(0)}€/client</div>
+                  </div>
+                  <button
+                    onClick={() => setRemunerationFounders(!remunerationFounders)}
+                    className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
+                      remunerationFounders ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                        remunerationFounders ? 'translate-x-7' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                {remunerationFounders && (
+                  <div className="text-xs text-gray-600 mt-2">
+                    8 500€/mois répartis sur 15 clients
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -278,7 +308,10 @@ export default function App() {
                 <div className="text-3xl font-bold mb-2">{coutsTotal.toLocaleString('fr-FR')} €</div>
                 <div className="text-xs text-gray-400 space-y-0.5">
                   <div>Production: {coutsProduction.toLocaleString('fr-FR')} €</div>
-                  <div>Frais fixes: 600 €</div>
+                  <div>Frais fixes: {FRAIS_FIXES_PAR_CLIENT} €</div>
+                  {remunerationFounders && (
+                    <div>Rémunération founders: {REMUNERATION_FOUNDERS_PAR_CLIENT.toFixed(0)} €</div>
+                  )}
                 </div>
               </div>
 
@@ -307,6 +340,9 @@ export default function App() {
               <div className="text-sm text-amber-800 space-y-1">
                 <div>• Coût journalier BDR: {COUT_BDR}€ | Tech: {COUT_TECH}€ | Growth: {COUT_GROWTH}€</div>
                 <div>• Frais fixes mensuels: 6000€ répartis sur 10 clients = 600€/client</div>
+                {remunerationFounders && (
+                  <div>• Rémunération founders: 8 500€/mois répartis sur 15 clients = {REMUNERATION_FOUNDERS_PAR_CLIENT.toFixed(0)}€/client</div>
+                )}
                 <div>• Seuil d'alerte: marge &lt; 20%</div>
                 <div>• Mode actif: <strong>{mode === 'CA' ? 'Chiffre d\'affaires' : 'Rendez-vous (CPL)'}</strong></div>
               </div>
