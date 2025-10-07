@@ -6,19 +6,22 @@ export default function App() {
   const [joursTech, setJoursTech] = useState(3);
   const [joursGrowth, setJoursGrowth] = useState(1);
   const [remunerationFounders, setRemunerationFounders] = useState(false);
+  const [tjmBDR, setTjmBDR] = useState(150);
   const [forfaitMensuel, setForfaitMensuel] = useState(10000);
   
   // Mode CA
   const [caGenere, setCaGenere] = useState(50000);
   const [pourcentageVariable, setPourcentageVariable] = useState(10);
   const [coefficient, setCoefficient] = useState(1.0);
+  const [partBDR_CA, setPartBDR_CA] = useState(20);
   
   // Mode RDV
   const [cpl, setCpl] = useState(50);
   const [nbRdv, setNbRdv] = useState(100);
+  const [partBDR_RDV, setPartBDR_RDV] = useState(20);
 
   // COÛTS MODIFIABLES ICI (non visibles par l'utilisateur)
-  const COUT_BDR = 150;
+  const COUT_BDR = tjmBDR + 15; // TJM BDR + 15€
   const COUT_TECH = 150;
   const COUT_GROWTH = 150;
   const FRAIS_FIXES_PAR_CLIENT = 600;
@@ -27,12 +30,18 @@ export default function App() {
 
   const coutsProduction = (joursBDR * COUT_BDR) + (joursTech * COUT_TECH) + (joursGrowth * COUT_GROWTH);
   const fraisFixesClient = FRAIS_FIXES_PAR_CLIENT + (remunerationFounders ? REMUNERATION_FOUNDERS_PAR_CLIENT : 0);
-  const coutsTotal = coutsProduction + fraisFixesClient;
   
   // Calcul du variable selon le mode
   const variable = mode === 'CA' 
     ? (caGenere * pourcentageVariable / 100) * coefficient
     : cpl * nbRdv;
+  
+  // Calcul de la part BDR sur le variable
+  const partBDRVariable = mode === 'CA'
+    ? variable * (partBDR_CA / 100)
+    : variable * (partBDR_RDV / 100);
+    
+  const coutsTotal = coutsProduction + fraisFixesClient + partBDRVariable;
     
   const revenusTotal = forfaitMensuel + variable;
   
@@ -91,6 +100,22 @@ export default function App() {
             </div>
             
             <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  TJM BDR (€/jour)
+                </label>
+                <input
+                  type="number"
+                  value={tjmBDR}
+                  onChange={(e) => setTjmBDR(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg font-medium"
+                  min="0"
+                  step="10"
+                />
+                <p className="text-xs text-gray-500 mt-1">Coût final: {COUT_BDR}€/jour (TJM + 15€)</p>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Jours BDR
@@ -244,6 +269,23 @@ export default function App() {
                     />
                     <p className="text-xs text-gray-500 mt-1">Projet facile &lt;1 | Standard =1 | Complexe &gt;1</p>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Part BDR sur variable (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={partBDR_CA}
+                      onChange={(e) => setPartBDR_CA(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Commission du commercial sur le variable</p>
+                  </div>
                 </>
               ) : (
                 <>
@@ -283,6 +325,23 @@ export default function App() {
                     <div className="text-2xl font-bold text-green-900">{variable.toLocaleString('fr-FR')} €</div>
                     <p className="text-xs text-green-600 mt-1">{nbRdv} RDV × {cpl}€</p>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Part BDR sur variable (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={partBDR_RDV}
+                      onChange={(e) => setPartBDR_RDV(Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
+                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-lg font-medium"
+                      min="0"
+                      max="100"
+                      step="1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Commission du commercial sur le variable</p>
+                  </div>
                 </>
               )}
             </div>
@@ -312,6 +371,7 @@ export default function App() {
                   {remunerationFounders && (
                     <div>Rémunération founders: {REMUNERATION_FOUNDERS_PAR_CLIENT.toFixed(0)} €</div>
                   )}
+                  <div>Part BDR sur variable: {partBDRVariable.toLocaleString('fr-FR')} €</div>
                 </div>
               </div>
 
@@ -338,11 +398,12 @@ export default function App() {
             <div>
               <h3 className="font-semibold text-amber-900 mb-2">Paramètres de base</h3>
               <div className="text-sm text-amber-800 space-y-1">
-                <div>• Coût journalier BDR: {COUT_BDR}€ | Tech: {COUT_TECH}€ | Growth: {COUT_GROWTH}€</div>
+                <div>• TJM BDR: {tjmBDR}€ (coût final: {COUT_BDR}€) | Tech: {COUT_TECH}€ | Growth: {COUT_GROWTH}€</div>
                 <div>• Frais fixes mensuels: 6000€ répartis sur 10 clients = 600€/client</div>
                 {remunerationFounders && (
                   <div>• Rémunération founders: 8 500€/mois répartis sur 15 clients = {REMUNERATION_FOUNDERS_PAR_CLIENT.toFixed(0)}€/client</div>
                 )}
+                <div>• Part BDR sur variable: {mode === 'CA' ? partBDR_CA : partBDR_RDV}% ({partBDRVariable.toLocaleString('fr-FR')}€)</div>
                 <div>• Seuil d'alerte: marge &lt; 20%</div>
                 <div>• Mode actif: <strong>{mode === 'CA' ? 'Chiffre d\'affaires' : 'Rendez-vous (CPL)'}</strong></div>
               </div>
